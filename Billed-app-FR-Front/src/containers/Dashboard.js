@@ -144,9 +144,9 @@ export default class {
         .html("")
       this.counter ++
     }
-
+    //[Bug Hunt] - Dashboard / ajout de off pour désactiver les gestionnaires d'événements précédents.
     bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      $(`#open-bill${bill.id}`).off('click').on('click',(e) => this.handleEditTicket(e, bill, bills))
     })
 
     return bills
