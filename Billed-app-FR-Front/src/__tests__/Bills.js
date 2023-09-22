@@ -64,5 +64,32 @@ describe("When I click a button new bill", () => { // Au clique sur le bouton no
   }) 
 })
 
+describe("When I click on first eye icon", () => { // Au clique sur l'icône du premier oeil
+  test("Then modal should open", () => { // Vérifier si la modal s'ouvre
+    Object.defineProperty(window, localStorage, { value: localStorageMock }); // Simulation des données dans le localstorage
+    window.localStorage.setItem("user", JSON.stringify({ type: "Employee" })); // Simulation d'un employé connecté
+    const html = BillsUI({ data: bills }); // Création de la constante pour la facture employé
+    document.body.innerHTML = html;
 
+    const onNavigate = (pathname) => { // Navigation vers bills
+      document.body.innerHTML = ROUTES({ pathname });
+    };
+    const billsContainer = new Bills({ // Création d'une facture
+      document,
+      onNavigate,
+      localStorage: localStorageMock,
+      store: null
+    });
+    // Affichage de la modale
+    $.fn.modal = jest.fn();
 
+    const handleClickIconEye = jest.fn(() => { // Simulation du clique
+      billsContainer.handleClickIconEye;
+    });
+    const firstEyeIcon = screen.getAllByTestId("icon-eye")[0];
+    firstEyeIcon.addEventListener("click", handleClickIconEye);
+    fireEvent.click(firstEyeIcon); // Simulation du clique sur l'icon
+    expect(handleClickIconEye).toHaveBeenCalled(); // Vérifier si l'événement au clique a été appeler
+    expect($.fn.modal).toHaveBeenCalled(); // Vérifier si la modale est appeler
+  })
+})
