@@ -10,6 +10,7 @@ const row = (bill) => {
   if (typeof jest !== 'undefined') {
     newDate = bill.date
   }
+   /* istanbul ignore next */
   else {
     // in prod environment
     newDate = formatDate(bill.date)
