@@ -90,7 +90,7 @@ describe("When I click on first eye icon", () => { // Au clique sur l'icône du 
     firstEyeIcon.addEventListener("click", handleClickIconEye);
     fireEvent.click(firstEyeIcon); // Simulation du clique sur l'icon
     expect(handleClickIconEye).toHaveBeenCalled(); // Vérifier si l'événement au clique a été appeler
-    expect($.fn.modal).toHaveBeenCalled(); // Vérifier si la modale est appeler
+    expect($.fn.modal).toHaveBeenCalled(); // Vérifier si la modale est appelée
   })
 })
 
