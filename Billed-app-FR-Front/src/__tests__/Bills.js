@@ -94,6 +94,7 @@ describe("When I click on first eye icon", () => { // Au clique sur l'icône du 
   })
 })
 
+
 describe("When I get bills", () => { // Récupération des factures
   test("Then it should render bills", () => { // Affichage des factures
     const bills = new Bills({ // Récupération des factures dans le store
@@ -106,5 +107,60 @@ describe("When I get bills", () => { // Récupération des factures
     const value = getBills(); // Vérification
     expect(getBills).toHaveBeenCalled(); // Vérifier si getBills est appelée
     expect(value.length).toBe(4);// Test si la longueur du tableau est de 4
+  })
+})
+
+// Test d'intégration GET
+describe("Given I am a user connected as Employee", () => { // Je suis connecté en tant qu'employé
+  describe("When I navigate to Bills page", () => { 
+    test("fetches bills from mock API GET", async () => { // Configure l'utilsateur comme employé dans le localstorage
+      localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a"}));
+      const root = document.createElement("div"); // Crée un élément dans le dom
+      root.setAttribute("id", "root");
+      document.body.append(root);
+      router();
+      window.onNavigate(ROUTES_PATH.Bills); // Navigue vers la page des factures
+      await waitFor(() => expect(screen.getByText("Mes notes de frais")).toBeTruthy()); // Atten que le texte "Mes notes de frais" soit affiché
+    })
+  });
+  describe("When an error occurs on API", () => { // Teste la gestion des erreurs de L'API
+    beforeEach(() => { // Configure les conditions avant chaque test
+      jest.spyOn(mockStore, "bills");
+      Object.defineProperty(window, "localStorage", { value: localStorageMock})
+      window.localStorage.setItem("user", JSON.stringify({
+        type: "Employee",
+        email: "a@a"
+      }))
+      const root = document.createElement("div");// Crée un élément dans le dom
+      root.setAttribute("id", "root");
+      document.body.append(root);
+      router();
+    })
+    test("Fetches bills from an API and fails with 404 message error", async () => { // Teste la gestion d'une erreur 404 de l'API
+      mockStore.bills.mockImplementationOnce(() => { // Simule une erreur 404 lors de la récupération des factures depuis l'API
+        return {
+          list : () => {
+            return Promise.reject(new Error("Erreur 404"))
+          },
+        };
+      });
+      window.onNavigate(ROUTES_PATH.Bills);// Navigue vers la page des factures
+      await new Promise(process.nextTick); // Attend que le message d'erreur 404 soit affiché
+      const message = await screen.getByText(/Erreur 404/);
+      expect(message).toBeTruthy();
+    });
+    test("Fetches message from an API and fails with 500 message error", async () => { // Teste la gestion d'une erreur 500 de l'API
+      mockStore.bills.mockImplementationOnce(() => {// Simule une erreur 500 lors de la récupération des factures depuis l'API
+        return {
+          list : () => {
+            return Promise.reject(new Error("Erreur 500"))
+          },
+        };
+      });
+      window.onNavigate(ROUTES_PATH.Bills); // Navigue vers la page des factures
+      await new Promise(process.nextTick);// Attend que le message d'erreur 500 soit affiché
+      const message = await screen.getByText(/Erreur 500/);
+      expect(message).toBeTruthy();
+    })
   })
 })
