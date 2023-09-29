@@ -29,7 +29,7 @@ describe("Given I am connected as an employee", () => {
       await waitFor(() => screen.getByTestId('icon-window'))
       const windowIcon = screen.getByTestId('icon-window')
       // [Ajout de tests unitaires et d'intégration] àjout de expect
-      expect(windowIcon).toHaveClass('highlighted');
+      expect(windowIcon.classList).toContain('active-icon');
 
     })
     test("Then bills should be ordered from earliest to latest", () => {
