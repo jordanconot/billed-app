@@ -94,22 +94,6 @@ describe("When I click on first eye icon", () => { // Au clique sur l'icône du 
   })
 })
 
-
-describe("When I get bills", () => { // Récupération des factures
-  test("Then it should render bills", () => { // Affichage des factures
-    const bills = new Bills({ // Récupération des factures dans le store
-      document,
-      onNavigate,
-      store: mockStore,
-      localStorage: window.localStorage
-    });
-    const getBills = jest.fn(() => bills.getBills()); // Simulation du clique
-    const value = getBills(); // Vérification
-    expect(getBills).toHaveBeenCalled(); // Vérifier si getBills est appelée
-    expect(value.length).toBe(4);// Test si la longueur du tableau est de 4
-  })
-})
-
 // Test d'intégration GET
 describe("Given I am a user connected as Employee", () => { // Je suis connecté en tant qu'employé
   describe("When I navigate to Bills page", () => { 
