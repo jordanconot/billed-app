@@ -104,7 +104,7 @@ describe("Given I am a user connected as Employee", () => { // Je suis connecté
       document.body.append(root);
       router();
       window.onNavigate(ROUTES_PATH.Bills); // Navigue vers la page des factures
-      await waitFor(() => expect(screen.getByText("Mes notes de frais")).toBeTruthy()); // Atten que le texte "Mes notes de frais" soit affiché
+      await waitFor(() => expect(screen.getByText("Mes notes de frais")).toBeTruthy()); // Attend que le texte "Mes notes de frais" soit affiché
     })
   });
   describe("When an error occurs on API", () => { // Teste la gestion des erreurs de L'API
