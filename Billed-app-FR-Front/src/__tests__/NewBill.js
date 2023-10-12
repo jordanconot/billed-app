@@ -162,7 +162,6 @@ describe("Given I am a user connected as Employee", () => {
 
       expect(handleSubmit).toHaveBeenCalled(); // Vérifie que la fonction handleSubmit a été appelée
       expect(newBillComponent.updateBill).toHaveBeenCalled(); // Vérifie que la fonction updateBill a été appelée
-      
     })
 
     test("Fetches error from API and fails with 500 error", async () => {

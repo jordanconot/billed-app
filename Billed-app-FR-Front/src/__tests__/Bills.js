@@ -33,7 +33,7 @@ describe("Given I am connected as an employee", () => {
 
     })
     test("Then bills should be ordered from earliest to latest", () => {
-      document.body.innerHTML = BillsUI({ data: bills })
+      document.body.innerHTML = BillsUI({ data: bills });
       const dates = screen.getAllByText(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i).map(a => a.innerHTML)
       const antiChrono = (a, b) => ((a < b) ? 1 : -1)
       const datesSorted = [...dates].sort(antiChrono)
@@ -98,13 +98,17 @@ describe("When I click on first eye icon", () => { // Au clique sur l'icône du 
 describe("Given I am a user connected as Employee", () => { // Je suis connecté en tant qu'employé
   describe("When I navigate to Bills page", () => { 
     test("fetches bills from mock API GET", async () => { // Configure l'utilsateur comme employé dans le localstorage
-      localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a"}));
-      const root = document.createElement("div"); // Crée un élément dans le dom
-      root.setAttribute("id", "root");
-      document.body.append(root);
-      router();
-      window.onNavigate(ROUTES_PATH.Bills); // Navigue vers la page des factures
-      await waitFor(() => expect(screen.getByText("Mes notes de frais")).toBeTruthy()); // Attend que le texte "Mes notes de frais" soit affiché
+      window.localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
+      const bills = new Bills({
+        document,
+        onNavigate,
+        store:mockStore,
+        localStorage: window.localStorage,
+      });
+      const getBills = jest.spyOn(bills, 'getBills');
+      const values = await getBills();
+      expect(getBills).toHaveBeenCalled(); // on s'assure que la méthode a été appelée
+      expect(values.length).toBe(4); // on verifie la longueur de bills
     })
   });
   describe("When an error occurs on API", () => { // Teste la gestion des erreurs de L'API
