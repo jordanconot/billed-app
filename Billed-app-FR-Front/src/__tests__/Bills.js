@@ -98,17 +98,27 @@ describe("When I click on first eye icon", () => { // Au clique sur l'icône du 
 describe("Given I am a user connected as Employee", () => { // Je suis connecté en tant qu'employé
   describe("When I navigate to Bills page", () => { 
     test("fetches bills from mock API GET", async () => { // Configure l'utilsateur comme employé dans le localstorage
-      window.localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
-      const bills = new Bills({
+      const bills = new Bills({// Récupération des factures dans le store
         document,
         onNavigate,
-        store:mockStore,
+        store: mockStore,
         localStorage: window.localStorage,
       });
-      const getBills = jest.spyOn(bills, 'getBills');
-      const values = await getBills();
-      expect(getBills).toHaveBeenCalled(); // on s'assure que la méthode a été appelée
-      expect(values.length).toBe(4); // on verifie la longueur de bills
+      const getBills = jest.fn(() => bills.getBills()); //simulation du click       
+      const value = await getBills(); //vérification
+      expect(getBills).toHaveBeenCalled(); //ON TEST SI LA METHODE EST APPELEE
+      expect(value.length).toBe(4); //test si la longeur du tableau est a 4 du store.js
+      localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a"}));
+      const root = document.createElement("div"); // Crée un élément dans le dom
+      root.setAttribute("id", "root");
+      document.body.append(root);
+      router();
+      window.onNavigate(ROUTES_PATH.Bills); // Navigue vers la page des factures
+      await waitFor(() => expect(screen.getByText("Mes notes de frais")).toBeTruthy()); // Attend que le texte "Mes notes de frais" soit affiché
+
+      // const contentRefused  = await screen.getByText("Refusé (2)")
+      // expect(contentRefused).toBeTruthy()
+      // expect(screen.getByTestId("big-billed-icon")).toBeTruthy()
     })
   });
   describe("When an error occurs on API", () => { // Teste la gestion des erreurs de L'API

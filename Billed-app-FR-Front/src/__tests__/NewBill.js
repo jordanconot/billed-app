@@ -111,7 +111,7 @@ describe('When I get the right receipt format', () => {
 //Test d'intégration POST
 describe("Given I am a user connected as Employee", () => {
   describe("When I submit the form completed", () => {
-    test("Then the bill is created", async() => {
+    test("Then the bill is created", async () => {
       const content = NewBillUI();  // Crée le contenu de la page NewBill
       document.body.innerHTML = content; // Injecte le contenu dans le corps du document
       const onNavigate = (pathname) => { // Définit une fonction de navigation fictive
@@ -162,11 +162,13 @@ describe("Given I am a user connected as Employee", () => {
 
       expect(handleSubmit).toHaveBeenCalled(); // Vérifie que la fonction handleSubmit a été appelée
       expect(newBillComponent.updateBill).toHaveBeenCalled(); // Vérifie que la fonction updateBill a été appelée
+      expect(screen.getByText('Mes notes de frais')).toBeTruthy(); // Redirection vers bills
     })
 
+
     test("Fetches error from API and fails with 500 error", async () => {
-      jest.spyOn(mockStore, "bills") // Espionne la fonction bills du magasin (store) simulé
-      jest.spyOn(console, "error").mockImplementation(() => {}); // Espionne la fonction console.error pour éviter l'affichage des erreurs
+      jest.spyOn(mockStore, "bills") // Espionne la fonction bills (store) simulé
+      const erreur = jest.spyOn(console, "error").mockImplementation(() => {}); // Espionne la fonction console.error pour éviter l'affichage des erreurs
 
       // Initialise les données de l'utilisateur fictif dans le stockage local
       Object.defineProperty(window, "localStorage", { value: localStorageMock });
@@ -178,7 +180,7 @@ describe("Given I am a user connected as Employee", () => {
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname });
       }
-      mockStore.bills.mockImplementationOnce(() => { // Simule une erreur 500 lors de la mise à jour de la facture dans le magasin (store)
+      mockStore.bills.mockImplementationOnce(() => { // Simule une erreur 500 lors de la mise à jour de la facture dans le (store)
         return {
           update : () => {
             return Promise.reject(new Error("Erreur 500"))
@@ -197,7 +199,8 @@ describe("Given I am a user connected as Employee", () => {
       form.addEventListener("submit", handleSubmit);  // Simule la soumission du formulaire
       fireEvent.submit(form);
       await new Promise(process.nextTick); // Attends que la prochaine promesse soit résolue
-      expect(console.error).toBeCalled(); // Vérifie que la fonction console.error a été appelée
+      expect(erreur).toHaveBeenCalledWith(expect.objectContaining({ message: "Erreur 500" })); // Vérifie si "Erreur 500" est bien affiché dans la console
+      erreur.mockRestore();
     })
   })
 })
