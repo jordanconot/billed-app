@@ -122,10 +122,10 @@ describe("Given I am a user connected as Employee", () => {
         type: "Employee",
         email: "a@a",
       }))
-      const newBillComponent = new NewBill({
+      const newBill = new NewBill({
         document,
         onNavigate,
-        store: null,
+        store: mockStore,
         localStorage: window.localStorage
       })
       const validBill = {  // données de facture valide
@@ -143,26 +143,31 @@ describe("Given I am a user connected as Employee", () => {
 
       // Remplit les champs du formulaire avec les données de facture simulées
       screen.getByTestId("vat").value = validBill.vat;
-      newBillComponent.fileUrl = validBill.fileUrl
+      newBill.fileUrl = validBill.fileUrl
       screen.getByTestId("expense-type").value = validBill.type;
       screen.getByTestId("commentary").value = validBill.commentary;
       screen.getByTestId("expense-name").value = validBill.name;
-      newBillComponent.fileName = validBill.fileName;
+      newBill.fileName = validBill.fileName;
       screen.getByTestId("datepicker").value = validBill.date;
       screen.getByTestId("amount").value = validBill.amount;
       screen.getByTestId("pct").value = validBill.pct;
 
+     
       // Simule la soumission du formulaire
-      newBillComponent.updateBill = jest.fn();
-      const handleSubmit = jest.fn((e) => newBillComponent.handleSubmit(e));
+      newBill.updateBill = jest.fn();
+      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
 
       const form = screen.getByTestId("form-new-bill");
       form.addEventListener("submit", handleSubmit);
       fireEvent.submit(form);
 
+      
+
       expect(handleSubmit).toHaveBeenCalled(); // Vérifie que la fonction handleSubmit a été appelée
-      expect(newBillComponent.updateBill).toHaveBeenCalled(); // Vérifie que la fonction updateBill a été appelée
-      expect(screen.getByText('Mes notes de frais')).toBeTruthy(); // Redirection vers bills
+      expect(newBill.updateBill).toHaveBeenCalled(); // Vérifie que la fonction updateBill a été appelée
+      await waitFor(() => expect(screen.getByText("Mes notes de frais")).toBeTruthy()); // Redirection vers bills
+      // expect(screen.getByText('Montpellier Paris')).toBeTruthy();
+      
     })
 
 
@@ -187,7 +192,7 @@ describe("Given I am a user connected as Employee", () => {
           }
         }
       })
-      const newBillComponent = new NewBill({ // Initialise une instance de NewBill avec des données simulées
+      const newBill = new NewBill({ // Initialise une instance de NewBill avec des données simulées
         document,
         onNavigate,
         store: mockStore,
@@ -195,7 +200,7 @@ describe("Given I am a user connected as Employee", () => {
       })
 
       const form = screen.getByTestId("form-new-bill"); // Sélectionne le formulaire de la nouvelle facture
-      const handleSubmit = jest.fn((e) => newBillComponent.handleSubmit(e)); // Définit une fonction de gestion de soumission fictive
+      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e)); // Définit une fonction de gestion de soumission fictive
       form.addEventListener("submit", handleSubmit);  // Simule la soumission du formulaire
       fireEvent.submit(form);
       await new Promise(process.nextTick); // Attends que la prochaine promesse soit résolue

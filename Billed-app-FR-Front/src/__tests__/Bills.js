@@ -115,10 +115,12 @@ describe("Given I am a user connected as Employee", () => { // Je suis connecté
       router();
       window.onNavigate(ROUTES_PATH.Bills); // Navigue vers la page des factures
       await waitFor(() => expect(screen.getByText("Mes notes de frais")).toBeTruthy()); // Attend que le texte "Mes notes de frais" soit affiché
+      const contentPending  = await screen.getByText("pending");
+      expect(contentPending).toBeTruthy();
+      const contentAccepted  = await screen.getByText("accepted");
+      expect(contentAccepted).toBeTruthy();
+      expect(screen.getAllByTestId("icon-eye")).toBeTruthy();
 
-      // const contentRefused  = await screen.getByText("Refusé (2)")
-      // expect(contentRefused).toBeTruthy()
-      // expect(screen.getByTestId("big-billed-icon")).toBeTruthy()
     })
   });
   describe("When an error occurs on API", () => { // Teste la gestion des erreurs de L'API
