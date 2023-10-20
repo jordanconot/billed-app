@@ -111,8 +111,6 @@ describe('When I get the right receipt format', () => {
 //Test d'intégration POST
 describe("Given I am connected as Employee on NewBill page, and submit the form", () => {
   beforeEach(() => {
-    jest.spyOn(mockStore, "bills"); // espionne la fonction 'bills' du mockstore
-
     Object.defineProperty(window, "localStorage", { // Initialise le localStorage pour simuler un utilisateur connecté
       value: localStorageMock,
     });
@@ -131,16 +129,7 @@ describe("Given I am connected as Employee on NewBill page, and submit the form"
 
   describe("When I create new bill", () => {
     test("Send bill to mock API POST", async () => {
-      localStorage.setItem( // Initialise à nouveau le localStorage pour simuler un utilisateur connecté
-        "user",
-        JSON.stringify({ type: "Employee", email: "a@a" })
-      );
-      const root = document.createElement("div");
-      root.setAttribute("id", "root");
-      document.body.append(root);
-      router();
       window.onNavigate(ROUTES_PATH.NewBill); // Appelle 'onNavigate' pour accéder à la page NewBill
-      jest.spyOn(mockStore, "bills"); // Espionne à nouveau la fonction 'bills' du mockStore
 
       const newBill = new NewBill({ // Crée une instance de NewBill
         document,
@@ -156,6 +145,9 @@ describe("Given I am connected as Employee on NewBill page, and submit the form"
       await new Promise(process.nextTick); // Attend la prochaine promesse pour que le code asynchrone soit exécuté
       console.log("document.body", document.body.innerHTML); //Affiche le contenu du document
       expect(handleSubmit).toHaveBeenCalled();  // Vérifie si la fonction 'handleSubmit' a été appelée
+      await waitFor(() => screen.getAllByText("Mes notes de frais"));
+      expect(screen.getAllByText("Mes notes de frais")).toBeTruthy();
+      expect(screen.getAllByText("Refused")).toBeTruthy();
     });
 
     describe("When an error occurs on API", () => {
